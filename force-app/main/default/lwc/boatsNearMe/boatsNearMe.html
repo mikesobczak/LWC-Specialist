@@ -1,0 +1,17 @@
+<template>
+    <lightning-card class="slds-is-relative">
+
+       <!-- The template and lightning-spinner goes here -->
+       <template if:true={isLoading}>
+         <div class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+         </div>
+      </template>
+
+       <!-- The lightning-map goes here -->
+       <lightning-map map-markers={mapMarkers} zoom-level="10"></lightning-map>
+       
+       <div slot="footer">Top 10 Only!</div>
+    </lightning-card>
+  </template>
+  
