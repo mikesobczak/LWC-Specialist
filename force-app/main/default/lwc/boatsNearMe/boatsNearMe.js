@@ -1,7 +1,7 @@
-import { LightningElement, wire } from 'lwc';
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { LightningElement, api, wire } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-import getBoatsByLocation from "@salesforce/apex/BoatDataService.getBoatsByLocation";
+import getBoatsByLocation from '@salesforce/apex/BoatDataService.getBoatsByLocation';
 
 // imports
 const LABEL_YOU_ARE_HERE = 'You are here!';
@@ -9,7 +9,7 @@ const ICON_STANDARD_USER = 'standard:user';
 const ERROR_TITLE = 'Error loading Boats Near Me';
 const ERROR_VARIANT = 'error';
 export default class BoatsNearMe extends LightningElement {
-	boatTypeId;
+	@api boatTypeId;
 	mapMarkers = [];
 	isLoading = true;
 	isRendered;
@@ -27,10 +27,12 @@ export default class BoatsNearMe extends LightningElement {
 			this.dispatchEvent(
 				new ShowToastEvent({
 					title: ERROR_TITLE,
-					message: ERROR_VARIANT,
-					variant: "error"
+					message: error.body.message,
+					variant: ERROR_VARIANT
 				})
 			);
+
+			this.isLoading = false;
 		}
 	}
 
@@ -51,26 +53,43 @@ export default class BoatsNearMe extends LightningElement {
 			navigator.geolocation.getCurrentPosition(position => {
 
 				// Get the Latitude and Longitude from Geolocation API
-				var latitude = position.coords.latitude;
-				var longitude = position.coords.longitude;
+				this.latitude = position.coords.latitude;
+				this.longitude = position.coords.longitude;
 
-				// Add Latitude and Longitude to the markers list.
-				this.mapMarkers = [{
-					location: {
-						Latitude: latitude,
-						Longitude: longitude
-					},
-					icon: ICON_STANDARD_USER,
-					title: LABEL_YOU_ARE_HERE
-				}];
-				this.zoomlevel = "4";
+				this.zoomlevel = '4';
 			});
 		}
 	}
 
 	// Creates the map markers
 	createMapMarkers(boatData) {
+
 		// const newMarkers = boatData.map(boat => {...});
+		let newMarkers = boatData.map(boat => {
+			return {
+					location: {
+						Latitude: boat.Geolocation__Latitude__s,
+						Longitude: boat.Geolocation__Longitude__s
+					},
+					value: boat.Id,
+					title: boat.Name
+				};
+			
+		});
+
 		// newMarkers.unshift({...});
+		newMarkers.unshift({
+			location: {
+				Latitude: this.latitude,
+				Longitude: this.longitude
+			},
+			icon: ICON_STANDARD_USER,
+			title: LABEL_YOU_ARE_HERE
+		});
+
+		this.mapMarkers = newMarkers;
+
+		this.isLoading = false;
+		
 	}
 }
