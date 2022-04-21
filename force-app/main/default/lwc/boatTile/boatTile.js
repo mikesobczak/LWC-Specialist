@@ -29,7 +29,7 @@ export default class BoatTile extends LightningElement {
 		const boatId = boat.Id;
 
 		const selectEvent = new CustomEvent("boatselect", {
-			detail: boatId,
+			detail: {boatId: boatId},
 			bubbles: true
 		});
 		this.dispatchEvent(selectEvent);
