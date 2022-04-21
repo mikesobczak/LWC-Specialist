@@ -12,7 +12,7 @@
 
 				<p class="slds-var-p-horizontal_small">
 					<!-- boatSearchForm component goes here -->
-					<c-boat-search-form></c-boat-search-form>
+					<c-boat-search-form onsearch={searchBoats}></c-boat-search-form>
 				</p>
 			</lightning-card>
 		</lightning-layout-item>
@@ -21,7 +21,7 @@
 			<!-- Spinner goes here -->
 			<template if:true={isLoading}>
 				<div class="exampleHolder">
-					<lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+					<lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
 				</div>
 			</template>
 
